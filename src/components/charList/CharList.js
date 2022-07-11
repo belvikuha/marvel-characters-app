@@ -14,18 +14,45 @@ class CharList extends Component {
     state ={
         chars : [],
         loading: true,
-        error: false
+        error: false,
+        newCharLoading: false,
+        offset: 210,
+        charEnded: false
     }
     componentDidMount(){
-        this.marvelService
-        .getAllCharacters()
-        .then(this.setCharsState)
-        .catch(this.onError)
+        this.onRequest();
 
-        console.log("mount")
+        // console.log("mount")
     }
-    setCharsState=(chars)=>{
-        this.setState({chars:chars, loading: false})
+
+
+    onRequest = (offset)=>{
+        this.onCharsLoading();
+        this.marvelService
+            .getAllCharacters(offset)
+            .then(this.onCharsLoaded)
+            .catch(this.onError)
+    }
+
+    onCharsLoading = () =>{
+        this.setState({newCharLoading: true})
+    }
+
+    onCharsLoaded=(newChars)=>{
+        let ended = false;
+        if(newChars.length <9){
+            ended = true;
+        }
+
+
+        this.setState(({offset, chars})=>({ ///возвращаем объект из этой функции !!! если нам нужно взаимодействие со старым стейтом!!!
+                chars:[...chars, ...newChars], 
+                loading: false,
+                newCharLoading: false,
+                offset: offset+9,
+                charEnded:ended
+                })
+            )
     }
 
     onError = () => {
@@ -37,7 +64,7 @@ class CharList extends Component {
  
 
 render(){
-    const {chars, loading, error} = this.state;
+    const {chars, loading, error, newCharLoading, offset, charEnded} = this.state;
     const elements = chars.map((item)=>{
         return(
             <CharListItem key={item.id} Item = {item} onCharSelected={this.props.onCharSelected}/>
@@ -55,7 +82,12 @@ render(){
                 {content}
               
             </ul>
-            <button className="button button__main button__long">
+            <button 
+                className="button button__main button__long"
+                disabled= {newCharLoading}
+                onClick = {()=>this.onRequest(offset)}
+                style={{'display': charEnded? 'none' : 'block'}}
+                >
                 <div className="inner">load more</div>
             </button>
         </div>
