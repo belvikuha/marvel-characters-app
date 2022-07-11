@@ -1,5 +1,4 @@
 import './charInfo.scss';
-import thor from '../../resources/img/thor.jpeg';
 import Spinner from "../spinner/Spinner";
 import ErrorMessage from '../errorMessage/errorMessage';
 import Skeleton from '../skeleton/Skeleton';
@@ -104,7 +103,7 @@ return(
             {comics.lemgh > 0 ? null : "There is no cmics"}
             {
                 comics.map((item, i)=>{
-                    if(i>9) {return;}
+                    if(i>9) {return}
                     return(
                         <li key={i} className="char__comics-item">
                             {item.name}
