@@ -20,7 +20,9 @@ const App =()=> {
         
         <AppHeader/>
         <main>
-            <RandomChar/>
+            <ErrorBoundary>
+                <RandomChar/>
+            </ErrorBoundary>
             <div className="char__content">
                 <ErrorBoundary>
                     <CharList onCharSelected={onCharSelected}/>

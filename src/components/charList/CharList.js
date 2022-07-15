@@ -1,38 +1,30 @@
 import './charList.scss';
 // import abyss from '../../resources/img/abyss.jpg';
-import MarvelService from '../../services/MarvelService';
+import useMarvelService from '../../services/MarvelService';
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/errorMessage';
 import { useState, useEffect, useRef } from 'react';
 
 
 const CharList =(props)=> {
-
-    const marvelService = new MarvelService();
-
     const [chars, setChars] = useState([]);
-    const [loading, setLoading] = useState(true)
-    const [error, setError] = useState(false)
     const [newCharLoading, setNewCharLoading] = useState(false)
     const [offset, setOffset] = useState(210)
     const [charEnded, setCharEnded] = useState(false)
  
+    const {loading, error, getAllCharacters} = useMarvelService();
 
     useEffect(()=>{
-        onRequest();
+        onRequest(offset, true);
     },[])
 
 
-    const onRequest = (offset) => {
-        onCharsLoading();
-        marvelService
-            .getAllCharacters(offset)
-            .then(onCharsLoaded)
-            .catch(onError)
-    }
 
-    const onCharsLoading = () =>{
-        setNewCharLoading(true)
+    const onRequest = (offset, initial) => {
+        initial ? setNewCharLoading(false) :setNewCharLoading(true); 
+        getAllCharacters(offset)
+            .then(onCharsLoaded)
+            
     }
 
     const onCharsLoaded=(newChars)=>{
@@ -43,7 +35,7 @@ const CharList =(props)=> {
 
         
         setChars(charList => [...charList, ...newChars]);
-        setLoading(loading => false);
+        
         setNewCharLoading(newItemLoading => false);
         setOffset(offset => offset + 9);
         setCharEnded(charEnded => ended);
@@ -51,18 +43,8 @@ const CharList =(props)=> {
 
     }
 
-    const onError = () => {
-        setError(true);
-        setLoading(loading => false);
-    }
- 
-    const itemRefs=useRef([]);
-
-    // setMyRef = elem =>{
-    //     this.itemRefs.push(elem);
-    // } 
   
-
+    const itemRefs=useRef([]);
     const focusOnItem = (id) => {
         // Я реализовал вариант чуть сложнее, и с классом и с фокусом
         // Но в теории можно оставить только фокус, и его в стилях использовать вместо класса
@@ -104,14 +86,14 @@ const CharList =(props)=> {
 
     const elements = renderListItems();
     const errorMessage = error ? <ErrorMessage/> : null;
-    const spinner = loading ? <Spinner/> : null;
-    const content = !(loading || error) ? elements : null;
+    const spinner = loading && !newCharLoading ? <Spinner/> : null;
+
     return (
         <div className="char__list">
             <ul className="char__grid">
                 {errorMessage}
                 {spinner}
-                {content}
+                {elements}
               
             </ul>
             <button 
