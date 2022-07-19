@@ -8,7 +8,7 @@ export const useListMarvel = ()=>{
     const [offset, setOffset] = useState(210)
     const [itemsEnded, setItemsEnded] = useState(false)
  
-    const {getAllCharacters} = useMarvelService();
+    const {loading, error, getAllCharacters, clearError} = useMarvelService();
 
 
     const onRequest = useCallback((offset, initial, type) => {
@@ -35,5 +35,5 @@ export const useListMarvel = ()=>{
         itemRefs.current[id].classList.add('char__item_selected');
     },[])
 
-    return {items, newItemsLoading, itemRefs, offset, itemsEnded, onRequest, onItemsLoaded, focusOnItem}
+    return {items, newItemsLoading, itemRefs, offset, itemsEnded, onRequest, onItemsLoaded, focusOnItem, loading, error}
 }

@@ -1,6 +1,4 @@
 import './comicsList.scss';
-import uw from '../../resources/img/UW.png';
-import xMen from '../../resources/img/x-men.png';
 import useMarvelService from '../../services/MarvelService';
 import { useListMarvel } from '../../hooks/list.hook';
 import { useState, useEffect } from 'react';
@@ -9,11 +7,10 @@ import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/errorMessage';
 const ComicsList = (props) => {
 
-    const {loading, error} = useMarvelService();
-    const {items, newItemsLoading, offset,itemRefs, itemsEnded, onRequest, onItemsLoaded, focusOnItem}= useListMarvel()
+    const {items, newItemsLoading, offset,itemRefs, itemsEnded, onRequest, onItemsLoaded, focusOnItem, loading, error}= useListMarvel()
 
     useEffect(()=>{
-        onRequest(offset, true, '');
+        onRequest(offset, true, 'comics');
     },[])
 
     function renderListItems(){
@@ -28,7 +25,7 @@ const ComicsList = (props) => {
                    
                     <li className="comics__item" key={i}>
                     <a href="#">
-                        <img src={item.thumbnail} alt={item.title} className="comics__item-img"/>
+                        <img src={item.thumbnail} alt={item.title} className="comics__item-img" style={imgStyle}/>
                         <div className="comics__item-name">{item.title}</div>
                         <div className="comics__item-price">{item.pageCount}</div>
                     </a>
@@ -53,7 +50,11 @@ const ComicsList = (props) => {
                 {spinner}
                 {elements}
             </ul>
-            <button className="button button__main button__long">
+            <button className="button button__main button__long"
+             disabled= {newItemsLoading}
+             onClick = {()=>onRequest(offset,false, 'comics')}
+             style={{'display': itemsEnded? 'none' : 'block'}}
+            >
                 <div className="inner">load more</div>
             </button>
         </div>
