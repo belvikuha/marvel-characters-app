@@ -1,10 +1,12 @@
-import './comicsList.scss';
-import useMarvelService from '../../services/MarvelService';
 import { useListMarvel } from '../../hooks/list.hook';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/errorMessage';
+
+import './comicsList.scss';
+
 const ComicsList = (props) => {
 
     const {items, newItemsLoading, offset,itemRefs, itemsEnded, onRequest, onItemsLoaded, focusOnItem, loading, error}= useListMarvel()
@@ -24,11 +26,11 @@ const ComicsList = (props) => {
                 <>
                    
                     <li className="comics__item" key={i}>
-                    <a href="#">
+                    <Link to={`/comics/${item.id}`}>
                         <img src={item.thumbnail} alt={item.title} className="comics__item-img" style={imgStyle}/>
                         <div className="comics__item-name">{item.title}</div>
                         <div className="comics__item-price">{item.pageCount}</div>
-                    </a>
+                    </Link>
                 </li>
 
                 </>
