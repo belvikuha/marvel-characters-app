@@ -5,7 +5,8 @@ const Page404 =()=>{
     return(
         <div>
             <ErrorMessage/>
-            <Link style={{'textAlign':'center'}}to="/">Back to main page</Link> 
+            <p style={{'textAlign':'center'}}>Page doesn't exist <br/> <Link to="/"> <b>Back to main page</b></Link> </p>
+           
         </div>
     )
 }
