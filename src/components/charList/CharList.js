@@ -5,9 +5,25 @@ import { useListMarvel } from '../../hooks/list.hook';
 
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/errorMessage';
+// import setContent from '../../utils/setContent';
 
 import { useState, useEffect, useRef } from 'react';
 
+
+const setContent  =(process,Component, newItemsLoading)=>{
+    switch(process){
+        case 'waiting':
+            return <Spinner/>
+        case 'loading':
+            return newItemsLoading ? <Component/> : <Spinner/>
+        case 'confirmed':
+            return<Component />
+        case 'error':
+            return <ErrorMessage/>
+        default:
+            throw new Error('Unexpected process')
+    }
+}
 
 const CharList =(props)=> {
     // const [chars, setChars] = useState([]);
@@ -16,7 +32,8 @@ const CharList =(props)=> {
     // const [charEnded, setCharEnded] = useState(false)
  
     // const {loading, error} = useMarvelService();
-    const {items, newItemsLoading, offset,itemRefs, itemsEnded, onRequest, onItemsLoaded, focusOnItem, loading, error}= useListMarvel()
+    const {items, newItemsLoading, offset,itemRefs, itemsEnded, onRequest, onItemsLoaded, focusOnItem,
+         loading, error, process, setProcess}= useListMarvel()
 
     useEffect(()=>{
         onRequest(offset, true, 'char');
@@ -26,7 +43,7 @@ const CharList =(props)=> {
 
     
     
-    function renderListItems(){
+    function renderListItems(items){
         return items.map((item, i)=>{
             let imgStyle = {'objectFit' : 'cover'};
             if (item.thumbnail === 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg') {
@@ -52,16 +69,14 @@ const CharList =(props)=> {
     
     }
 
-    const elements = renderListItems();
-    const errorMessage = error ? <ErrorMessage/> : null;
-    const spinner = loading && !newItemsLoading ? <Spinner/> : null;
+    // const elements = renderListItems();
+    // const errorMessage = error ? <ErrorMessage/> : null;
+    // const spinner = loading && !newItemsLoading ? <Spinner/> : null;
 
     return (
         <div className="char__list">
             <ul className="char__grid">
-                {errorMessage}
-                {spinner}
-                {elements}
+                {setContent(process, ()=> renderListItems(items), newItemsLoading)}
               
             </ul>
             <button 

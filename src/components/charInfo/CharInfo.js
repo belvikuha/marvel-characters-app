@@ -1,15 +1,14 @@
 import './charInfo.scss';
-import Spinner from "../spinner/Spinner";
-import ErrorMessage from '../errorMessage/errorMessage';
-import Skeleton from '../skeleton/Skeleton';
+
 import useMarvelService from '../../services/MarvelService';
+import setContent from '../../utils/setContent';
 import { useEffect, useState } from 'react';
 
 const CharInfo =(props)=> {
 
     const [char, setChar] = useState(null);
   
-    const {loading, error, getCharacter, clearError} = useMarvelService();
+    const { getCharacter, clearError, process, setProcess} = useMarvelService();
 
 
     // useEffect(()=>{
@@ -30,6 +29,7 @@ const CharInfo =(props)=> {
         
         getCharacter(charId)
             .then(onCharLoaded)
+            .then(()=> setProcess('confirmed'))
             
     }
 
@@ -37,29 +37,39 @@ const CharInfo =(props)=> {
 
     const onCharLoaded = (char) => {
         setChar(char);
-    
-    
     }
 
-    const skeleton =  char || loading || error ? null : <Skeleton/>
-    const spinner = loading ?  <Spinner/> : null;
-    const errMessage = error ? <ErrorMessage/> : null;
-    const content = !(loading || error || !char) ? <View char={char}/> : null;
+    // const setContent  =(process, char)=>{
+    //     switch(process){
+    //         case 'waiting':
+    //             return <Skeleton/>
+    //         case 'loading':
+    //             return<Spinner/>
+    //         case 'confirmed':
+    //             return<View char={char}/>
+    //         case 'error':
+    //             return <ErrorMessage/>
+    //         default:
+    //             throw new Error('Unexpected process')
+    //     }
+    // }
+
+    // const skeleton =  char || loading || error ? null : <Skeleton/>
+    // const spinner = loading ?  <Spinner/> : null;
+    // const errMessage = error ? <ErrorMessage/> : null;
+    // const content = !(loading || error || !char) ? <View char={char}/> : null;
 
     return (
     <div className="char__info">
-        {skeleton}
-        {errMessage}
-        {spinner}
-        {content}
+        {setContent(process, View,  char)}
     </div>
     )
     }
    
 
 
-const View = ({char})=>{
-    const {name, description, thumbnail,homepage, wiki, comics} = char;
+const View = ({data})=>{
+    const {name, description, thumbnail,homepage, wiki, comics} = data;
     let imgStyle = {'objectFit' : 'cover'};
     if (thumbnail === 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg') {
         imgStyle = {'objectFit' : 'unset'};
